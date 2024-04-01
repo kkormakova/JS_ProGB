@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add feetback</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #efc5ff;
+        }
+        .feedback-container {
+            width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 100px;
+        }
+        .feedback-form {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 25px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Создайте интерактивную веб-страницу для оставления и просмотра отзывов о продуктах. Пользователи могут добавлять отзывы о различных продуктах и просматривать добавленные отзывы.
+
+Страница добавления отзыва:
+
+Поле для ввода названия продукта.
+Текстовое поле для самого отзыва.
+Кнопка "Добавить отзыв", которая сохраняет отзыв о продукте в LocalStorage. -->
+
+    <div class="feedback-container">
+        <h1 class="title">Добавьте ваш отзыв</h1>
+        <div class="feedback-form">
+            <input class="inputNameProduct" type="text" placeholder="Название продукта"/>
+            <textarea class="inputComment" placeholder="Введите текст" cols="30" rows="10"></textarea>
+            <button class="addBtn">Добавить отзыв</button>
+        </div>
+    </div>
+    <script>
+        //   const feedbackList = new Map();
+        const inputNameProduct = document.querySelector(".inputNameProduct");
+        const inputComment = document.querySelector(".inputComment");
+        const addBtn = document.querySelector(".addBtn");
+        addBtn.addEventListener("click", () => {
+            //получаем название продукта
+            const nameProduct = inputNameProduct.value;
+            // const comment = [inputComment.value];
+            const comment = inputComment.value;
+            //проверяем наличие отзывов, если есть, тодобавим к ним
+            if (localStorage.getItem(nameProduct)) {
+                let feedbackList = JSON.parse(localStorage.getItem(nameProduct));
+                feedbackList.push(comment);
+                localStorage.setItem(nameProduct, JSON.stringify(feedbackList));
+            } else {
+                localStorage.setItem(nameProduct, JSON.stringify([comment]));
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View feetback</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            background-color: #efc5ff;
+        }
+        .feedback-container {
+            width: 600px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding-top: 30px;
+        }
+        .product-list {
+            display: flex;
+            flex-direction: column;
+        }
+        .productName {
+            font-size: 22px;
+            width: 300px;
+            padding: 10px;
+            background-color: #f7dcf1;
+            border-bottom: 2px solid rgb(136, 136, 135);
+        }
+        li {
+            list-style-type: none;
+        }
+        .comment {
+            border-bottom: 1px solid rgb(177, 177, 176);
+            background-color: #fcd8ff;
+            display: flex;
+            justify-content: space-between;
+            padding: 5px;
+            max-width: 270px;
+        }
+        button {
+            width: 65px;
+            height: 25px;
+        }
+    </style>
+</head>
+<body>
+<!-- Страница просмотра отзывов:
+
+Показывает список всех продуктов, о которых были оставлены отзывы.
+При клике на название продукта отображается список всех отзывов по этому продукту.
+Возможность удаления отзыва (при нажатии на кнопку "Удалить" рядом с отзывом, данный отзыв удаляется из LocalStorage).  -->
+
+<div class="feedback-container">
+    <h1 class="title">Выберите продукт</h1>
+    <ul class="product-list"></ul>
+</div>
+
+<script>
+    const productList = document.querySelector(".product-list");
+
+    // загрузим список продуктов по данным localStorege
+    let products = Object.keys(localStorage);
+    for (let key of products) {
+        let productName = document.createElement("li");
+        productName.classList.add("productName");
+        productName.innerHTML = key;
+        productList.appendChild(productName);
+        productName.addEventListener("click", (e) => {
+            const chosenProd = e.target.innerHTML;
+            productName.after(createListFeedback(chosenProd));
+        });
+    }
+    // функция создания списка отзывов по продукту
+    function createListFeedback(name) {
+        // определяем массив отзывов по продукту
+        let commentList = JSON.parse(localStorage.getItem(name));
+        let productComments = document.createElement("ul");
+        productComments.classList.add("commentList");
+        for (const item in commentList) {
+            let comment = document.createElement("li");
+            comment.classList.add("comment");
+            comment.innerHTML = commentList[item];
+            let removeBtn = document.createElement("button");
+            removeBtn.innerHTML = "Удалить";
+            comment.appendChild(removeBtn);
+            productComments.appendChild(comment);
+        }
+        return productComments;
+    }
+    //  удаление отзыва
+    productList.addEventListener("click", (event) => {
+        if (event.target.textContent === "Удалить") {
+            const articleItem = event.target.closest("li");
+            const removeCommentProduct =
+            event.target.parentElement.parentElement.previousElementSibling.innerHTML; // продукт для корректировки в LocalStorage
+            const removeComment = articleItem.textContent; //комментарий для удаления, содержит текст li и текст кнопки Удалить
+            console.log("комментарий для удаления" + removeComment);
+            articleItem.remove();
+            // перезаписываем LocalStorage
+            //получаем список отзывов по продукту
+            let productInfoFromLocalSt = JSON.parse(localStorage.getItem(removeCommentProduct));
+            for (const item in productInfoFromLocalSt) {
+                if (productInfoFromLocalSt[item] + "Удалить" === removeComment) {
+                    productInfoFromLocalSt.splice(item, 1);
+                }
+            }
+            localStorage.setItem(removeCommentProduct,JSON.stringify(productInfoFromLocalSt));
+        }
+    });
+    </script>
+</body>
+</html>
